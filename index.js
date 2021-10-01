@@ -44,19 +44,28 @@ const APP = {
       loc += `, ${APP.state}`
     }
     loc += `, ${APP.country}`
-    document.getElementById("location").innerHTML = loc;
+    document.getElementById("location").innerHTML = `<h1>${loc}</h1>`;
 
     // update the status
-    document.getElementById("status").innerHTML = forecast.current.weather[0].description;
+    document.getElementById("status").innerHTML =
+    `<div>
+      <img
+        src="http://openweathermap.org/img/wn/${
+          forecast.current.weather[0].icon
+        }@2x.png"
+        alt
+      />
+    </div>
+    `
 
     // update the current temperature
-    document.getElementById("temp").innerHTML = forecast.current.temp;
+    document.getElementById("temp").innerHTML = `<h1>${forecast.current.temp}°</h1>`;
 
     // update the hi and lo temperatures
     let {hi, lo} = APP.getHighestAndLowestTemps(forecast)
     console.log(hi, lo);
-    document.getElementById("high").innerHTML = hi;
-    document.getElementById("low").innerHTML = lo;
+    document.getElementById("high").innerHTML = `<h6>${hi}°</h6>`;
+    document.getElementById("low").innerHTML = `<h6 class="text-muted">${lo}°</h6>`;
   },
 
   updateHourlyTempHTML (forecast) {
@@ -185,7 +194,7 @@ const APP = {
               }@2x.png"
               alt width="20"
             />
-            <span>%${forecast.humidity}</span>
+            <span class="text-primary">%${forecast.humidity}</span>
           </div>
 
           <div class="col-1 offset-1">
@@ -193,7 +202,7 @@ const APP = {
           </div>
 
           <div class="col-1">
-            <span>${lo}</span>
+            <span class="text-muted">${lo}</span>
           </div>
         </div>
     `
