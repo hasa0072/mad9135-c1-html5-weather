@@ -14,6 +14,12 @@ const APP = {
   async main() {
     document.getElementById("loc-search-icon").addEventListener("click", APP.getLocation)
     document.getElementById("my-loc").addEventListener("click", APP.getCurrentLocation)
+    document.getElementById("loc-search").addEventListener("keyup", (ev) => {
+      ev.preventDefault()
+      if (ev.code == "Enter") {
+        APP.getLocation(ev)
+      }
+    })
 
     //set key based on device id
     APP.KEY = "device" in window ? "WEATHERAPP" + device.uuid : "HASA0072WEATHERAPP";

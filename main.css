@@ -1,10 +1,10 @@
 /* The heart of the matter */
-.testimonial-group > .row {
+.hourly-group > .row {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
   }
-  .testimonial-group > .row > .col-2 {
+  .hourly-group > .row > .col-2 {
     display: inline-block;
   }
 
