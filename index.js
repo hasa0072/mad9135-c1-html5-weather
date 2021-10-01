@@ -14,6 +14,7 @@ async function main() {
 
     updateCurrentTempHTML(location, forecast)
     updateHourlyTempHTML(forecast)
+    updateDailyTempHTML(forecast)
   } catch (error) {
     console.log(error.message);
   }
@@ -51,25 +52,35 @@ function updateHourlyTempHTML(forecast) {
   hoursContainer.innerHTML = innerHTML
 }
 
+function updateDailyTempHTML(forecast) {
+  let innerHTML = ``
+  let count = 6;
+  forecast.daily.slice(1).forEach((fc) => {
+    if (count == 0) {
+      return
+    }
+    innerHTML += forecastToDailyHTML(fc)
+    count -= 1
+  })
+
+  document.getElementById("daily").innerHTML = innerHTML
+}
+
 /*
  * Utility functions below this line
  */
 
 // Finds highest and lowest temperature for today's forecast
 function getHighestAndLowestTemps(forecast) {
-  let hi = -300; // below absolute zero is not possible, safe to use -300
-  let lo = 100000; // not a realistic lo value, safe to use 100000 degrees for initial value
-  forecast.hourly.forEach((fc) => {
-    if (fc.temp > hi) {
-      hi = fc.temp
-    }
+  // if we have daily in the forecast, then daily[0] is today.
+  // take max and min of today
+  if ('daily' in forecast) {
+    return {hi: forecast.daily[0].temp.max, lo: forecast.daily[0].temp.min}
+  } else if ('max' in forecast.temp && 'min' in forecast.temp) {
+    return {hi: forecast.temp.max, lo: forecast.temp.min}
+  }
 
-    if (fc.temp < lo) {
-      lo = fc.temp
-    }
-  })
-
-  return {hi: hi, lo: lo}
+  return null
 }
 
 // Get next N hours of forecast from now
@@ -94,6 +105,7 @@ function getNextHoursForecast(forecast, n) {
   return fcs
 }
 
+// Convert given forcest to an HTML div with hour, status and temp
 function forecastToHourlyHTML(forecast) {
   let temp = forecast.temp
   let status = 's'
@@ -121,5 +133,36 @@ function forecastToHourlyHTML(forecast) {
       </div>
     </div>
   </div>
+  `
+}
+
+function forecastToDailyHTML(forecast) {
+  let {hi, lo} = getHighestAndLowestTemps(forecast)
+  let date = new Date(forecast.dt * 1000)
+  let day = date.toLocaleDateString('en-US', { weekday: 'long' });
+
+  // For daily forecast, we don't need it to be too much accurate
+  hi = Math.round(hi)
+  lo = Math.round(lo)
+
+  return `
+      <div class="row">
+        <div class="col-5">
+          <span>${day}</span>
+        </div>
+
+        <div class="col-3">
+          <span>ic</span>
+          <span>%${forecast.humidity}</span>
+        </div>
+
+        <div class="col-1 offset-1">
+          <span>${hi}</span>
+        </div>
+
+        <div class="col-1">
+          <span>${lo}</span>
+        </div>
+      </div>
   `
 }
