@@ -2,8 +2,9 @@ import { getForecast, createWeatherIcon } from './weather.service.js';
 import { getCityAndCountry, getGeolocation } from './map.service.js';
 
 const APP = {
+  KEY: null,
   location: 'Algonquin College, Nepean, ON, CA',
-  coord: {lon: 0, lat: 0},
+  coord: null,
   city: 'Ottawa',
   country: 'Canada',
   state: 'Ontario',
@@ -14,12 +15,26 @@ const APP = {
     document.getElementById("loc-search-icon").addEventListener("click", APP.getLocation)
     document.getElementById("my-loc").addEventListener("click", APP.getCurrentLocation)
 
+    //set key based on device id
+    APP.KEY = "device" in window ? "WEATHERAPP" + device.uuid : "HASA0072WEATHERAPP";
+
+    //check local storage first
+    if (localStorage.getItem(APP.KEY)) {
+      let str = localStorage.getItem(APP.KEY);
+      APP.coord = JSON.parse(str);
+    }
     APP.updatePage()
   },
 
   async updatePage() {
+    if (APP.coord != null) {
+      localStorage.setItem(APP.KEY, JSON.stringify(APP.coord));
+    }
+
     try {
-      const forecast = await getForecast( APP.coord);
+      const coord = APP.coord
+      const forecast = await getForecast( {coord});
+      console.log(forecast);
 
       let loc = await getCityAndCountry(APP.coord);
       APP.city = loc.city
@@ -64,7 +79,6 @@ const APP = {
 
     // update the hi and lo temperatures
     let {hi, lo} = APP.getHighestAndLowestTemps(forecast)
-    console.log(hi, lo);
     document.getElementById("high").innerHTML = `<h6>${hi}°</h6>`;
     document.getElementById("low").innerHTML = `<h6 class="text-muted">${lo}°</h6>`;
   },
@@ -217,6 +231,7 @@ const APP = {
     const coord = await getGeolocation(APP.location);
 
     APP.coord = coord
+    console.log(APP.coord);
     APP.updatePage()
   },
 

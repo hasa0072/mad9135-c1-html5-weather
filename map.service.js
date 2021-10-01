@@ -20,7 +20,6 @@ export async function getCityAndCountry(coord) {
     throw new Error(response.statusText);
   }
   const data = await response.json();
-  console.log(data)
   if ('state' in data.address) {
     return { city: data.address.city, country: data.address.country, state: data.address.state}
   } else {
