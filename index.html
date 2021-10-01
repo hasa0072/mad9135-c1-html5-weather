@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather | C1</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css"/>
   </head>
   <body>
     <div id="root">
@@ -38,14 +40,37 @@
       <hr/>
 
       <!-- Hourly report -->
-      <div class="container flex-nowrap" id="hourly">
+      <div class="container testimonial-group">
         <div class="row" id="hours">
-        </div>
 
-        <div class="row" id="icons">
-        </div>
+          <div class="col-2">
+            <div class="d-flex flex-column">
+              <div id="h-hour">
+                h
+              </div>
+              <div id="h-status">
+                s
+              </div>
+              <div id="h-temp">
+                t
+              </div>
+            </div>
+          </div>
 
-        <div class="row" id="temps">
+          <div class="col-1">
+            <div class="d-flex flex-column">
+              <div id="h-hour">
+                h
+              </div>
+              <div id="h-status">
+                s
+              </div>
+              <div id="h-temp">
+                t
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
       <hr/>
@@ -65,7 +90,7 @@
           <div class="col-1 offset-2" id="d-hi">
             <span>hi</span>
           </div>
-          
+
           <div class="col-1" id="d-lo">
             <span>lo</span>
           </div>
