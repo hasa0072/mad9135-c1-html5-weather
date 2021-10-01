@@ -9,5 +9,21 @@ export async function getGeolocation(location) {
     throw new Error(response.statusText);
   }
   const data = await response.json();
-  return { lat: data[0].lat, lon: data[0].lon };
+  return { lat: data[0].lat, lon: data[0].lon};
+}
+
+export async function getCityAndCountry(coord) {
+  const url = `${BASE_URL}/reverse.php?key=${API_TOKEN}&lat=${coord.lat}&lon=${coord.lon}&format=json`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  const data = await response.json();
+  console.log(data)
+  if ('state' in data.address) {
+    return { city: data.address.city, country: data.address.country, state: data.address.state}
+  } else {
+    return { city: data.address.city, country: data.address.country}
+  }
 }
