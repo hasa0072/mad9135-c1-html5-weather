@@ -19,5 +19,34 @@ async function main() {
 }
 
 function updateCurrentTempHTML(location, forecast) {
+  // update the location
   document.getElementById("location").innerHTML = location;
+
+  // update the status
+  document.getElementById("status").innerHTML = forecast.current.weather[0].description;
+
+  // update the current temperature
+  document.getElementById("temp").innerHTML = forecast.current.temp;
+
+  // update the hi and lo temperatures
+  let {hi, lo} = getHighestAndLowestTemps(forecast)
+  console.log(hi, lo);
+  document.getElementById("high").innerHTML = hi;
+  document.getElementById("low").innerHTML = lo;
+}
+
+function getHighestAndLowestTemps(forecast) {
+  let hi = -300; // below absolute zero is not possible, safe to use -300
+  let lo = 100000; // not a realistic lo value, safe to use 100000 degrees for initial value
+  forecast.hourly.forEach((fc) => {
+    if (fc.temp > hi) {
+      hi = fc.temp
+    }
+
+    if (fc.temp < lo) {
+      lo = fc.temp
+    }
+  })
+
+  return {hi: hi, lo: lo}
 }
