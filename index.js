@@ -3,6 +3,7 @@ import { getCityAndCountry, getGeolocation } from './map.service.js';
 
 const APP = {
   location: 'Algonquin College, Nepean, ON, CA',
+  coord: {lon: 0, lat: 0},
   city: 'Ottawa',
   country: 'Canada',
   state: 'Ontario',
@@ -11,16 +12,16 @@ const APP = {
   // You should replace this with your own application logic.
   async main() {
     document.getElementById("loc-search-icon").addEventListener("click", APP.getLocation)
+    document.getElementById("my-loc").addEventListener("click", APP.getCurrentLocation)
 
     APP.updatePage()
   },
 
   async updatePage() {
     try {
-      const coord = await getGeolocation(APP.location);
-      const forecast = await getForecast({ coord });
+      const forecast = await getForecast( APP.coord);
 
-      let loc = await getCityAndCountry(coord);
+      let loc = await getCityAndCountry(APP.coord);
       APP.city = loc.city
       APP.country = loc.country
       if ('state' in loc) {
@@ -208,14 +209,41 @@ const APP = {
     `
   },
 
-  getLocation (event) {
+  async getLocation (event) {
     event.preventDefault();
 
-    console.log(event.target)
     let location = document.getElementById("loc-search").value
     APP.location = location
+    const coord = await getGeolocation(APP.location);
+
+    APP.coord = coord
     APP.updatePage()
-  }
+  },
+
+  getCurrentLocation (event) {
+    event.preventDefault();
+
+    let opts = {
+      enableHighAccuracy: true,
+      timeout: 1000 * 10, //10 seconds
+      maximumAge: 1000 * 60 * 5, //5 minutes
+    };
+    navigator.geolocation.getCurrentPosition(APP.geoLocSuccess, APP.geoLocFailure, opts);
+  },
+
+  geoLocSuccess: (position) => {
+    //got position  
+    let lat = position.coords.latitude;
+    let lon  = position.coords.longitude;
+
+    APP.coord = {lon: lon, lat: lat}
+    APP.updatePage()
+  },
+
+  geoLocFailure: (err) => {
+    //geolocation failed
+    console.error(err);
+  },
 }
 
 document.addEventListener("DOMContentLoaded", APP.main)
